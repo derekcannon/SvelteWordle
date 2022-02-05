@@ -5,3 +5,10 @@
 <main>
 	<slot />
 </main>
+
+<style>
+	main {
+		height: 100%;
+		display: block;
+	}
+</style>

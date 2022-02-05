@@ -26,7 +26,6 @@
 		gap: 0.75rem;
 		padding: 5px;
 		font-size: 2rem;
-		/* background: lightgreen; */
 	}
 
 	.letterBox {
