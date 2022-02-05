@@ -2,13 +2,19 @@
 	import { createEventDispatcher } from "svelte";
 	import { keyMappings } from "$lib/utils";
 
+	export let highlights = {};
+
 	const dispatch = createEventDispatcher();
 </script>
 
 {#each keyMappings as keyMappingRow}
 	<div class="keyRow">
 		{#each keyMappingRow as keyMapping}
+			{@const highlight = highlights[keyMapping[1]]}
 			<button
+				class:nonOccurringLetter={highlight === 0}
+				class:correctLetter={highlight === 1}
+				class:correctPosition={highlight === 2}
 				on:click={(event) => {
 					event.target.blur();
 					dispatch("keypress", {
@@ -42,5 +48,17 @@
 	button:active {
 		background: darkgray;
 		transform: scale(0.9);
+	}
+
+	.nonOccurringLetter {
+		background: #3a3a3c;
+	}
+
+	.correctPosition {
+		background: #538d4e;
+	}
+
+	.correctLetter {
+		background: #b59f3b;
 	}
 </style>

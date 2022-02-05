@@ -21,6 +21,17 @@
 	$: scoreSums = scores.map((scoreArray) => scoreArray.reduce((a, b) => a + b, 0));
 	$: hasWon = scoreSums.includes(2 * answer.length);
 	$: gameOver = hasWon || !hasGuessesLeft;
+	$: keyboardHighlights = guesses.reduce((acc, guessRows, guessRowIndex) => {
+		guessRows.forEach((guessLetter, guessLetterIndex) => {
+			const keyValue = acc[guessLetter];
+			const scoreKeyValue = scores[guessRowIndex][guessLetterIndex];
+
+			if (!keyValue || keyValue < scoreKeyValue) {
+				acc[guessLetter] = scoreKeyValue;
+			}
+		});
+		return acc;
+	}, {});
 
 	function handleKeypress({ key, keyCode }) {
 		if (gameOver) {
@@ -68,20 +79,21 @@
 				<p>
 					The word was {answer}.
 				</p>
-				<button on:click={reset}> Play again </button>
+				<button on:click={reset}>Play again</button>
 			</div>
 		{/if}
 
 		{#if hasWon}
 			<div class="centered">
 				<p>YOU WIN!</p>
-				<button on:click={reset}> Play again </button>
+				<button on:click={reset}>Play again</button>
 			</div>
 		{/if}
 	</div>
 
 	<div class="keyboard">
 		<Keyboard
+			highlights={keyboardHighlights}
 			on:keypress={({ detail }) => {
 				handleKeypress(detail);
 			}}
@@ -110,7 +122,7 @@
 	}
 
 	.keyboard {
-		padding-bottom: 0.5rem;
+		padding-bottom: 1rem;
 	}
 
 	h1 {
