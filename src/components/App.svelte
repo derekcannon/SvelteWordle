@@ -1,25 +1,30 @@
 <script>
-	import { evaluateScore, wordList } from "$lib/utils";
+	import { onMount } from "svelte";
 	import { evaluateScore } from "$lib/evaluateScore";
 	import { wordList } from "$lib/wordList";
 	import WordRow from "./WordRow.svelte";
 	import Keyboard from "./Keyboard.svelte";
 
 	const maxGuesses = 6;
-	let answer, guesses, scores, guessLetters;
+	let answer = "";
+	let guesses = [];
+	let scores = [];
+	let guessLetters = [];
 
 	function reset() {
-		answer = wordList[Math.floor(Math.random() * wordList.length)];
+		if (window.Cypress) {
+			answer = window?.answer;
+		} else {
+			answer = wordList[Math.floor(Math.random() * wordList.length)];
+		}
 		guesses = [];
 		scores = [];
 		guessLetters = [];
 	}
 
-	reset();
-
 	$: wordLetterLimit = answer.length;
 	$: hasGuessesLeft = guesses.length < maxGuesses;
-	$: canGuess = guessLetters.length === wordLetterLimit && hasGuessesLeft;
+	$: canGuess = guessLetters.length && guessLetters.length === wordLetterLimit && hasGuessesLeft;
 	$: scoreSums = scores.map((scoreArray) => scoreArray.reduce((a, b) => a + b, 0));
 	$: hasWon = scoreSums.includes(2 * answer.length);
 	$: gameOver = hasWon || !hasGuessesLeft;
@@ -54,6 +59,14 @@
 			guessLetters = guessLetters;
 		}
 	}
+
+	onMount(() => {
+		reset();
+
+		window.__SvelteWordle__ = {
+			isLoaded: true,
+		};
+	});
 </script>
 
 <svelte:window on:keyup={handleKeypress} />
@@ -86,7 +99,7 @@
 		{/if}
 
 		{#if hasWon}
-			<div class="centered">
+			<div class="centered" data-test="hasWon">
 				<p>YOU WIN!</p>
 				<button on:click={reset}>Play again</button>
 			</div>
