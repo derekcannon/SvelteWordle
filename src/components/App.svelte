@@ -1,12 +1,17 @@
 <script>
-	import { evaluateScore, wordList } from "$lib/utils";
+	import { onMount } from "svelte";
 	import { evaluateScore } from "$lib/evaluateScore";
 	import { wordList } from "$lib/wordList";
 	import WordRow from "./WordRow.svelte";
 	import Keyboard from "./Keyboard.svelte";
+	import JSConfetti from "js-confetti";
 
+	let jsConfetti;
 	const maxGuesses = 6;
-	let answer, guesses, scores, guessLetters;
+	let answer = "";
+	let guesses = [];
+	let scores = [];
+	let guessLetters = [];
 
 	function reset() {
 		answer = wordList[Math.floor(Math.random() * wordList.length)];
@@ -14,8 +19,6 @@
 		scores = [];
 		guessLetters = [];
 	}
-
-	reset();
 
 	$: wordLetterLimit = answer.length;
 	$: hasGuessesLeft = guesses.length < maxGuesses;
@@ -34,6 +37,12 @@
 		});
 		return acc;
 	}, {});
+
+	$: {
+		if (hasWon) {
+			jsConfetti.addConfetti();
+		}
+	}
 
 	function handleKeypress({ key, keyCode }) {
 		if (gameOver) {
@@ -54,6 +63,11 @@
 			guessLetters = guessLetters;
 		}
 	}
+
+	onMount(() => {
+		jsConfetti = new JSConfetti();
+		reset();
+	});
 </script>
 
 <svelte:window on:keyup={handleKeypress} />
