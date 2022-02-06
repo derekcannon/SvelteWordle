@@ -1,6 +1,6 @@
 <script>
 	import { createEventDispatcher } from "svelte";
-	import { keyMappings } from "$lib/utils";
+	import { keyMappings } from "$lib/keyMappings";
 
 	export let highlights = {};
 

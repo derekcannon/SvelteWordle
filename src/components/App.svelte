@@ -1,5 +1,7 @@
 <script>
 	import { evaluateScore, wordList } from "$lib/utils";
+	import { evaluateScore } from "$lib/evaluateScore";
+	import { wordList } from "$lib/wordList";
 	import WordRow from "./WordRow.svelte";
 	import Keyboard from "./Keyboard.svelte";
 

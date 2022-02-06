@@ -1,70 +1,3 @@
-export function evaluateScore(guess, answer) {
-	const answerCopy = [...answer];
-	let guessCopy = [...guess];
-
-	// score exact matches first
-	const score = answerCopy.map((answerLetter, index) => {
-		const guessLetter = guessCopy[index];
-		if (answerLetter === guessLetter) {
-			answerCopy[index] = null;
-			return 2;
-		}
-		return null;
-	});
-
-	// score remaining matches
-	return score.map((value, index) => {
-		if (value) return value;
-
-		const guessLetter = guessCopy[index];
-		const guessAnswerIndex = answerCopy.findIndex((answerLetter) => answerLetter === guessLetter);
-
-		if (~guessAnswerIndex) {
-			answerCopy[guessAnswerIndex] = null;
-			return 1;
-		}
-
-		return 0;
-	});
-}
-
-export const keyMappings = [
-	[
-		[65, "q"],
-		[66, "w"],
-		[67, "e"],
-		[68, "r"],
-		[69, "t"],
-		[70, "y"],
-		[71, "u"],
-		[72, "i"],
-		[73, "o"],
-		[74, "p"],
-	],
-	[
-		[75, "a"],
-		[76, "s"],
-		[77, "d"],
-		[78, "f"],
-		[79, "g"],
-		[80, "h"],
-		[81, "j"],
-		[82, "k"],
-		[83, "l"],
-	],
-	[
-		[8, "↵", "Enter"],
-		[84, "z"],
-		[85, "x"],
-		[86, "c"],
-		[87, "v"],
-		[88, "b"],
-		[89, "n"],
-		[90, "m"],
-		[13, "⌫", "Backspace"],
-	],
-];
-
 // potential answers... shh, don't look!
 export const wordList = [
 	"abuse",
@@ -144,7 +77,6 @@ export const wordList = [
 	"index",
 	"input",
 	"issue",
-	"jones",
 	"judge",
 	"knife",
 	"layer",
@@ -175,7 +107,6 @@ export const wordList = [
 	"paper",
 	"party",
 	"peace",
-	"peter",
 	"phase",
 	"phone",
 	"piece",
@@ -216,11 +147,9 @@ export const wordList = [
 	"shirt",
 	"shock",
 	"sight",
-	"simon",
 	"skill",
 	"sleep",
 	"smile",
-	"smith",
 	"smoke",
 	"sound",
 	"south",
@@ -244,7 +173,6 @@ export const wordList = [
 	"sugar",
 	"table",
 	"taste",
-	"terry",
 	"theme",
 	"thing",
 	"title",
