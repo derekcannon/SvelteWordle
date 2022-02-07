@@ -4,7 +4,9 @@
 	import { wordList } from "$lib/wordList";
 	import WordRow from "./WordRow.svelte";
 	import Keyboard from "./Keyboard.svelte";
+	import JSConfetti from "js-confetti";
 
+	let jsConfetti;
 	const maxGuesses = 6;
 	let answer = "";
 	let guesses = [];
@@ -40,6 +42,12 @@
 		return acc;
 	}, {});
 
+	$: {
+		if (hasWon) {
+			jsConfetti.addConfetti();
+		}
+	}
+
 	function handleKeypress({ key, keyCode }) {
 		if (gameOver) {
 			if (key === "Enter") reset();
@@ -61,6 +69,7 @@
 	}
 
 	onMount(() => {
+		jsConfetti = new JSConfetti();
 		reset();
 
 		window.__SvelteWordle__ = {
