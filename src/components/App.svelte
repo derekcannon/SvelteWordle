@@ -5,6 +5,7 @@
 	import WordRow from "./WordRow.svelte";
 	import Keyboard from "./Keyboard.svelte";
 	import JSConfetti from "js-confetti";
+	import { setTestVariable, getTestVariable } from "$lib/cypressHelpers";
 
 	let jsConfetti;
 	const maxGuesses = 6;
@@ -14,7 +15,7 @@
 	let guessLetters = [];
 
 	function reset() {
-		answer = wordList[Math.floor(Math.random() * wordList.length)];
+		answer = getTestVariable("answer", wordList[Math.floor(Math.random() * wordList.length)]);
 		guesses = [];
 		scores = [];
 		guessLetters = [];
@@ -22,7 +23,7 @@
 
 	$: wordLetterLimit = answer.length;
 	$: hasGuessesLeft = guesses.length < maxGuesses;
-	$: canGuess = guessLetters.length === wordLetterLimit && hasGuessesLeft;
+	$: canGuess = guessLetters.length && guessLetters.length === wordLetterLimit && hasGuessesLeft;
 	$: scoreSums = scores.map((scoreArray) => scoreArray.reduce((a, b) => a + b, 0));
 	$: hasWon = scoreSums.includes(2 * answer.length);
 	$: gameOver = hasWon || !hasGuessesLeft;
@@ -65,6 +66,7 @@
 	}
 
 	onMount(() => {
+		setTestVariable("isLoaded", true);
 		jsConfetti = new JSConfetti();
 		reset();
 	});
@@ -77,34 +79,30 @@
 
 	<div class="game-container">
 		{#each guesses as guess, index}
-			<WordRow letters={guess} maxLetters={wordLetterLimit} score={scores[index]} />
+			<WordRow letters={guess} maxLetters={wordLetterLimit} score={scores[index]} row={index} />
 		{/each}
 
 		{#if hasGuessesLeft && !hasWon}
-			<WordRow letters={guessLetters} maxLetters={wordLetterLimit} />
+			<WordRow letters={guessLetters} maxLetters={wordLetterLimit} row={guesses.length} />
 		{/if}
 
-		{#if canGuess}
-			<div class="centered">
-				<p>Press enter (↵) to guess!</p>
-			</div>
-		{/if}
+		<div class="centered">
+			{#if canGuess}
+				<p class="canGuess">Press enter (↵) to guess!</p>
+			{/if}
 
-		{#if !hasGuessesLeft && !hasWon}
-			<div class="centered">
-				<p>
+			{#if !hasGuessesLeft && !hasWon}
+				<p class="hasLost">
 					The word was {answer}.
 				</p>
-				<button on:click={reset}>Play again</button>
-			</div>
-		{/if}
+				<button class="resetButton" on:click={reset}>Play again</button>
+			{/if}
 
-		{#if hasWon}
-			<div class="centered">
-				<p>YOU WIN!</p>
-				<button on:click={reset}>Play again</button>
-			</div>
-		{/if}
+			{#if hasWon}
+				<p class="hasWon">YOU WIN!</p>
+				<button class="resetButton" on:click={reset}>Play again</button>
+			{/if}
+		</div>
 	</div>
 
 	<div class="keyboard">
