@@ -1,26 +1,29 @@
 <script>
 	export let maxLetters;
 	export let letters;
+	export let row;
 	export let score = null;
 </script>
 
-<div class="wordContainer">
+<div class={`WordRow row-${row}`}>
 	{#each Array(maxLetters) as _, index}
 		<div
-			class="letterBox"
-			class:nonOccurringLetter={score && score[index] === 0}
-			class:correctPosition={score && score[index] === 2}
-			class:correctLetter={score && score[index] === 1}
+			class={`LetterBox box-${index}`}
+			class:noMatchLetter={score && score[index] === 0}
+			class:partialMatchLetter={score && score[index] === 1}
+			class:exactMatchLetter={score && score[index] === 2}
 		>
 			{#if letters[index]}
-				{letters[index]}
+				<span class="letter">
+					{letters[index]}
+				</span>
 			{/if}
 		</div>
 	{/each}
 </div>
 
 <style>
-	.wordContainer {
+	.WordRow {
 		display: flex;
 		justify-content: center;
 		flex-wrap: nowrap;
@@ -29,7 +32,7 @@
 		font-size: 2rem;
 	}
 
-	.letterBox {
+	.LetterBox {
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -39,18 +42,18 @@
 		box-sizing: border-box;
 	}
 
-	.nonOccurringLetter {
+	.noMatchLetter {
 		background: #3a3a3c;
 		border: none;
 	}
 
-	.correctPosition {
-		background: #538d4e;
+	.partialMatchLetter {
+		background: #b59f3b;
 		border: none;
 	}
 
-	.correctLetter {
-		background: #b59f3b;
+	.exactMatchLetter {
+		background: #538d4e;
 		border: none;
 	}
 </style>
