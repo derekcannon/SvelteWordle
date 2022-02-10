@@ -98,7 +98,7 @@
 	});
 </script>
 
-<svelte:window on:keyup={handleKeypress} />
+<svelte:window on:keydown={handleKeypress} />
 
 <div class="container">
 	<h1><span class="svelte">SVELTE</span> WORDLE</h1>
@@ -146,7 +146,7 @@
 	<div class="keyboard">
 		<Keyboard
 			highlights={keyboardHighlights}
-			on:keypress={({ detail }) => {
+			on:touchstart={({ detail }) => {
 				handleKeypress(detail);
 			}}
 		/>
@@ -183,6 +183,11 @@
 		color: black;
 	}
 
+	.hasLost {
+		padding-top: 0.5rem;
+		margin: 0;
+	}
+
 	.buttonContainer {
 		display: flex;
 		justify-content: center;
@@ -195,6 +200,10 @@
 
 	.keyboard {
 		padding-bottom: 1rem;
+		max-width: 450px;
+		width: 100%;
+		margin-left: auto;
+		margin-right: auto;
 	}
 
 	button {
@@ -218,7 +227,7 @@
 	h1 {
 		text-align: center;
 		font-weight: 700;
-		padding: 0 0 3rem;
+		padding: 0 0 1rem;
 		margin: 0;
 	}
 </style>
