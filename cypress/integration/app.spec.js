@@ -14,10 +14,10 @@ function tapGuess(guess, enter = false) {
 	const formattedGuess = typeof guess === "string" ? guess.split("") : guess;
 
 	formattedGuess.forEach((guess) => {
-		cy.get("button").contains(guess).click();
+		cy.get("button").contains(guess).trigger("touchstart");
 	});
 
-	if (enter) cy.get("button").contains("↵").click();
+	if (enter) cy.get("button").contains("↵").trigger("touchstart");
 }
 
 it("player can lose and replay and win", () => {
@@ -33,7 +33,7 @@ it("player can lose and replay and win", () => {
 	cy.get(".canGuess").should("be.visible");
 
 	// test delete functionality
-	cy.get("button").contains("⌫").click().click();
+	cy.get("button").contains("⌫").trigger("touchstart").trigger("touchstart");
 	tapGuess("ek", { enter: true });
 	cy.get(".WordRow.row-0").within(() => {
 		cy.get(".letter").should("have.text", "sonek");
@@ -52,7 +52,7 @@ it("player can lose and replay and win", () => {
 	cy.get(".resetButton").should("exist");
 
 	// ensure typing/deleting after game over doesn't work
-	cy.get("button").contains("⌫").click();
+	cy.get("button").contains("⌫").trigger("touchstart");
 	tapGuess("z");
 	cy.get(".WordRow.row-5").find(".letter").should("have.text", "tails");
 	cy.get(".WordRow.row-6").should("not.exist");

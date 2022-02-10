@@ -12,16 +12,18 @@
 		{#each keyMappingRow as keyMapping}
 			{@const highlight = highlights[keyMapping[1]]}
 			<button
-				class:noMatchLetter={highlight === 0}
-				class:partialMatchLetter={highlight === 1}
-				class:exactMatchLetter={highlight === 2}
-				on:click={(event) => {
-					event.target.blur();
-					dispatch("keypress", {
+				on:touchstart={() => {
+					dispatch("touchstart", {
 						key: keyMapping[2] || keyMapping[1],
 						keyCode: keyMapping[0],
 					});
-				}}>{keyMapping[1]}</button
+				}}
+				><span
+					class:noMatchLetter={highlight === 0}
+					class:partialMatchLetter={highlight === 1}
+					class:exactMatchLetter={highlight === 2}
+					class="keyBox">{keyMapping[1]}</span
+				></button
 			>
 		{/each}
 	</div>
@@ -34,12 +36,17 @@
 	}
 
 	button {
-		font-size: 1.5rem;
-		max-width: 2.5rem;
-		width: 2.5rem;
-		margin: 3px;
-		padding: 0.6rem;
+		background: none;
 		border: none;
+		margin: 0;
+		padding: 2px;
+		flex: 1;
+	}
+
+	.keyBox {
+		display: block;
+		font-size: 1.5rem;
+		padding: 0.6rem;
 		border-radius: 5px;
 		background: #818384;
 		color: white;
@@ -48,6 +55,7 @@
 	button:active {
 		background: darkgray;
 		transform: scale(0.9);
+		-webkit-touch-callout: none;
 	}
 
 	.noMatchLetter {
