@@ -71,7 +71,9 @@
 		}
 	}
 
-	function handleKeypress({ key, keyCode }) {
+	function handleKeypress({ key, keyCode, metaKey = false }) {
+		if (metaKey) return;
+
 		if (gameOver) {
 			if (key === "Enter") reset();
 			return;
