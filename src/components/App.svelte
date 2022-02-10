@@ -7,6 +7,7 @@
 	import WordRow from "./WordRow.svelte";
 	import Keyboard from "./Keyboard.svelte";
 	import JSConfetti from "js-confetti";
+	import { setTestVariable, getTestVariable } from "$lib/cypressHelpers";
 
 	const maxGuesses = 6;
 	let jsConfetti;
@@ -40,7 +41,7 @@
 	}
 
 	function reset() {
-		answer = wordList[Math.floor(Math.random() * wordList.length)];
+		answer = getTestVariable("answer", wordList[Math.floor(Math.random() * wordList.length)]);
 		guesses = [];
 		scores = [];
 		guessLetters = [];
@@ -48,7 +49,7 @@
 
 	$: wordLetterLimit = answer.length;
 	$: hasGuessesLeft = guesses.length < maxGuesses;
-	$: canGuess = guessLetters.length === wordLetterLimit && hasGuessesLeft;
+	$: canGuess = guessLetters.length && guessLetters.length === wordLetterLimit && hasGuessesLeft;
 	$: scoreSums = scores.map((scoreArray) => scoreArray.reduce((a, b) => a + b, 0));
 	$: hasWon = scoreSums.includes(2 * answer.length);
 	$: gameOver = hasWon || !hasGuessesLeft;
@@ -91,6 +92,7 @@
 	}
 
 	onMount(() => {
+		setTestVariable("isLoaded", true);
 		jsConfetti = new JSConfetti();
 		reset();
 	});
@@ -109,11 +111,11 @@
 		</div>
 
 		{#each guesses as guess, index}
-			<WordRow letters={guess} maxLetters={wordLetterLimit} score={scores[index]} />
+			<WordRow letters={guess} maxLetters={wordLetterLimit} score={scores[index]} row={index} />
 		{/each}
 
 		{#if hasGuessesLeft && !hasWon}
-			<WordRow letters={guessLetters} maxLetters={wordLetterLimit} />
+			<WordRow letters={guessLetters} maxLetters={wordLetterLimit} row={guesses.length} />
 		{/if}
 
 		<div class="centered">
