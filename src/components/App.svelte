@@ -8,6 +8,7 @@
 	import Keyboard from "./Keyboard.svelte";
 	import JSConfetti from "js-confetti";
 	import { setTestVariable, getTestVariable } from "$lib/cypressHelpers";
+	import { copyToClipboard } from "$lib/copyToClipboard";
 
 	const maxGuesses = 6;
 	let jsConfetti;
@@ -28,16 +29,15 @@
 	}
 
 	function copyResults() {
-		if (navigator?.clipboard) {
-			const emojiResults = `Svelte Wordle ${guesses.length}/6\r` + emojizeScores(scores);
+		const emojiResults = `Svelte Wordle ${guesses.length}/6\r` + emojizeScores(scores);
 
-			navigator.clipboard
-				.writeText(emojiResults)
-				.then(() => {
-					flashMessage("Copied to clipboard.", 1500);
-				})
-				.catch(() => {});
-		}
+		copyToClipboard(emojiResults)
+			.then(() => {
+				flashMessage("Copied to clipboard.", 1500);
+			})
+			.catch(() => {
+				flashMessage("Unable to copy to clipboard.", 1500);
+			});
 	}
 
 	function reset() {
