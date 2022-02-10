@@ -5,6 +5,20 @@
 	export let highlights = {};
 
 	const dispatch = createEventDispatcher();
+
+	function dispatchTouchStart(keyMapping) {
+		return dispatch("touchstart", {
+			key: keyMapping[2] || keyMapping[1],
+			keyCode: keyMapping[0],
+		});
+	}
+
+	function handleKeypress(event, keyMapping) {
+		event.stopPropagation();
+		event.target.blur(); // clear so button focus doesn't affect potential Enter key presses
+
+		dispatchTouchStart(keyMapping);
+	}
 </script>
 
 {#each keyMappings as keyMappingRow}
@@ -12,12 +26,8 @@
 		{#each keyMappingRow as keyMapping}
 			{@const highlight = highlights[keyMapping[1]]}
 			<button
-				on:touchstart={() => {
-					dispatch("touchstart", {
-						key: keyMapping[2] || keyMapping[1],
-						keyCode: keyMapping[0],
-					});
-				}}
+				on:touchstart={(event) => handleKeypress(event, keyMapping)}
+				on:click={(event) => handleKeypress(event, keyMapping)}
 				><span
 					class:noMatchLetter={highlight === 0}
 					class:partialMatchLetter={highlight === 1}

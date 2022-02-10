@@ -33,7 +33,7 @@ it("player can lose and replay and win", () => {
 	cy.get(".canGuess").should("be.visible");
 
 	// test delete functionality
-	cy.get("button").contains("⌫").trigger("touchstart").trigger("touchstart");
+	cy.get("button").contains("⌫").trigger("touchstart").click(); // use click AND touchstart to ensure both work
 	tapGuess("ek", { enter: true });
 	cy.get(".WordRow.row-0").within(() => {
 		cy.get(".letter").should("have.text", "sonek");
@@ -62,18 +62,18 @@ it("player can lose and replay and win", () => {
 
 	// test keyboard resets
 	cy.get(".keyRow").within(() => {
-		cy.get("button.exactMatchLetter").should("not.exist");
-		cy.get("button.partialMatchLetter").should("not.exist");
-		cy.get("button.noMatchLetter").should("not.exist");
+		cy.get(".keyBox.exactMatchLetter").should("not.exist");
+		cy.get(".keyBox.partialMatchLetter").should("not.exist");
+		cy.get(".keyBox.noMatchLetter").should("not.exist");
 	});
 
 	tapGuess(answer[1], { enter: true });
 
 	// test keyboard
 	cy.get(".keyRow").within(() => {
-		cy.get("button.exactMatchLetter").should("have.text", "tiasl");
-		cy.get("button.partialMatchLetter").should("not.exist");
-		cy.get("button.noMatchLetter").should("not.exist");
+		cy.get(".keyBox.exactMatchLetter").should("have.text", "tiasl");
+		cy.get(".keyBox.partialMatchLetter").should("not.exist");
+		cy.get(".keyBox.noMatchLetter").should("not.exist");
 	});
 
 	// test winning end results
@@ -109,8 +109,8 @@ it("player receives guess and keyboard hints, and can win", () => {
 
 	// test keyboard
 	cy.get(".keyRow").within(() => {
-		cy.get("button.exactMatchLetter").should("have.text", "ed");
-		cy.get("button.noMatchLetter").should("have.text", "x");
+		cy.get(".keyBox.exactMatchLetter").should("have.text", "ed");
+		cy.get(".keyBox.noMatchLetter").should("have.text", "x");
 	});
 
 	// ************************
@@ -130,9 +130,9 @@ it("player receives guess and keyboard hints, and can win", () => {
 
 	// test keyboard
 	cy.get(".keyRow").within(() => {
-		cy.get("button.exactMatchLetter").should("have.text", "ed");
-		cy.get("button.partialMatchLetter").should("have.text", "k");
-		cy.get("button.noMatchLetter").should("have.text", "x");
+		cy.get(".keyBox.exactMatchLetter").should("have.text", "ed");
+		cy.get(".keyBox.partialMatchLetter").should("have.text", "k");
+		cy.get(".keyBox.noMatchLetter").should("have.text", "x");
 	});
 
 	// ************************
@@ -152,9 +152,9 @@ it("player receives guess and keyboard hints, and can win", () => {
 
 	// test keyboard
 	cy.get(".keyRow").within(() => {
-		cy.get("button.exactMatchLetter").should("have.text", "erdk");
-		cy.get("button.partialMatchLetter").should("not.exist");
-		cy.get("button.noMatchLetter").should("have.text", "x");
+		cy.get(".keyBox.exactMatchLetter").should("have.text", "erdk");
+		cy.get(".keyBox.partialMatchLetter").should("not.exist");
+		cy.get(".keyBox.noMatchLetter").should("have.text", "x");
 	});
 
 	// test winning end results
