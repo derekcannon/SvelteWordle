@@ -137,7 +137,7 @@
 				</p>
 				<div class="buttonContainer">
 					<button class="shareButton" on:click={copyResults}>Share</button>
-					<button class="buttonPrimary resetButton" on:click={reset}>Play again</button>
+					<button class="buttonPrimary resetButton" on:click={() => reset()}>Play again</button>
 				</div>
 			{/if}
 
@@ -145,7 +145,7 @@
 				<p class="hasWon">YOU WIN!</p>
 				<div class="buttonContainer">
 					<button class="shareButton" on:click={copyResults}>Share</button>
-					<button class="buttonPrimary resetButton" on:click={reset}>Play again</button>
+					<button class="buttonPrimary resetButton" on:click={() => reset()}>Play again</button>
 				</div>
 			{/if}
 		</div>
