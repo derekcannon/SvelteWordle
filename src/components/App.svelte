@@ -9,6 +9,10 @@
 	import JSConfetti from "js-confetti";
 	import { setTestVariable, getTestVariable } from "$lib/cypressHelpers";
 	import { copyToClipboard } from "$lib/copyToClipboard";
+	import AppBar from "$comp/common/AppBar.svelte";
+	import { init } from "svelte/internal";
+
+	export let initialWord;
 
 	const maxGuesses = 6;
 	let jsConfetti;
@@ -40,8 +44,10 @@
 			});
 	}
 
-	function reset() {
-		answer = getTestVariable("answer", wordList[Math.floor(Math.random() * wordList.length)]);
+	function reset(initialWord) {
+		answer =
+			initialWord ||
+			getTestVariable("answer", wordList[Math.floor(Math.random() * wordList.length)]);
 		guesses = [];
 		scores = [];
 		guessLetters = [];
@@ -96,14 +102,14 @@
 	onMount(() => {
 		setTestVariable("isLoaded", true);
 		jsConfetti = new JSConfetti();
-		reset();
+		reset(initialWord);
 	});
 </script>
 
 <svelte:window on:keydown={handleKeypress} />
 
 <div class="container">
-	<h1><span class="svelte">SVELTE</span> WORDLE</h1>
+	<AppBar />
 
 	<div class="gameContainer">
 		<div class="messageArea">
@@ -156,10 +162,6 @@
 </div>
 
 <style>
-	.svelte {
-		color: #ff3e00b8; /* #ff3e00; */
-	}
-
 	.container {
 		display: flex;
 		flex-direction: column;
@@ -224,12 +226,5 @@
 	.buttonPrimary {
 		background: #538d4e;
 		color: #d7dadc;
-	}
-
-	h1 {
-		text-align: center;
-		font-weight: 700;
-		padding: 0 0 1rem;
-		margin: 0;
 	}
 </style>
