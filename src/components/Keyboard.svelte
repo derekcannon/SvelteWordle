@@ -14,7 +14,7 @@
 	}
 
 	function handleKeypress(event, keyMapping) {
-		event.stopPropagation();
+		event.preventDefault();
 		event.target.blur(); // clear so button focus doesn't affect potential Enter key presses
 
 		dispatchTouchStart(keyMapping);
