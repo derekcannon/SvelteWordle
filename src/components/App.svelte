@@ -10,7 +10,7 @@
 	import { setTestVariable, getTestVariable } from "$lib/cypressHelpers";
 	import { copyToClipboard } from "$lib/copyToClipboard";
 	import AppBar from "$comp/common/AppBar.svelte";
-	import { init } from "svelte/internal";
+	import { goto } from "$app/navigation";
 
 	export let initialWord;
 
@@ -81,7 +81,13 @@
 		if (metaKey) return;
 
 		if (gameOver) {
-			if (key === "Enter") reset();
+			if (key === "Enter") {
+				if (initialWord) {
+					goto("/");
+				} else {
+					reset();
+				}
+			}
 			return;
 		}
 
@@ -136,16 +142,24 @@
 					The word was "{answer}".
 				</p>
 				<div class="buttonContainer">
-					<button class="shareButton" on:click={copyResults}>Share</button>
-					<button class="buttonPrimary resetButton" on:click={() => reset()}>Play again</button>
+					<button class="button shareButton" on:click={copyResults}>Share</button>
+					<button class="button buttonPrimary resetButton" on:click={() => reset()}
+						>Play again</button
+					>
 				</div>
 			{/if}
 
 			{#if hasWon}
 				<p class="hasWon">YOU WIN!</p>
 				<div class="buttonContainer">
-					<button class="shareButton" on:click={copyResults}>Share</button>
-					<button class="buttonPrimary resetButton" on:click={() => reset()}>Play again</button>
+					<button class="button shareButton" on:click={copyResults}>Share</button>
+					{#if initialWord}
+						<a href="/" class="button buttonPrimary resetButton">Play more</a>
+					{:else}
+						<button class="button buttonPrimary resetButton" on:click={() => reset()}
+							>Play again</button
+						>
+					{/if}
 				</div>
 			{/if}
 		</div>
@@ -210,15 +224,16 @@
 		margin-right: auto;
 	}
 
-	button {
+	.button {
 		border: 0;
 		border-radius: 6px;
 		font-size: 1.25rem;
 		padding: 0.5rem;
 		width: 8rem;
+		text-decoration: none;
 	}
 
-	button:active {
+	.button:active {
 		filter: brightness(85%);
 		transform: scale(0.95);
 	}
