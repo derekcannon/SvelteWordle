@@ -11,7 +11,6 @@
 	import AppBar from "$comp/common/AppBar.svelte";
 	import Alert from "$comp/common/Alert.svelte";
 	import Button from "$comp/common/Button.svelte";
-	import { goto } from "$app/navigation";
 
 	export let initialWord;
 
