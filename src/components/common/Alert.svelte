@@ -29,14 +29,11 @@
 		font-size: 1rem;
 	}
 
-	.container p {
+	p {
 		padding: 0.5rem 1rem;
 		border-radius: 6px;
 		background: #d7dadc;
 		color: black;
-	}
-
-	p {
 		margin: 0;
 	}
 </style>
