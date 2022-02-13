@@ -40,6 +40,7 @@
 		height: 3rem;
 		border: 1px solid #787c7e;
 		box-sizing: border-box;
+		font-weight: 700;
 	}
 
 	.noMatchLetter {

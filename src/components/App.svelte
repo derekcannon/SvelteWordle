@@ -1,14 +1,20 @@
 <script>
 	import { onMount } from "svelte";
-	import { fade } from "svelte/transition";
+	import JSConfetti from "js-confetti";
 	import { evaluateScore } from "$lib/evaluateScore";
 	import { wordList } from "$lib/wordList";
 	import { emojizeScores } from "$lib/emojizeScores";
-	import WordRow from "./WordRow.svelte";
-	import Keyboard from "./Keyboard.svelte";
-	import JSConfetti from "js-confetti";
 	import { setTestVariable, getTestVariable } from "$lib/cypressHelpers";
 	import { copyToClipboard } from "$lib/copyToClipboard";
+	import WordRow from "$comp/common/WordRow.svelte";
+	import Keyboard from "$comp/common/Keyboard.svelte";
+	import AppBar from "$comp/common/AppBar.svelte";
+	import Alert from "$comp/common/Alert.svelte";
+	import Button from "$comp/common/Button.svelte";
+
+	export let initialWord;
+
+	let alert;
 
 	const maxGuesses = 6;
 	let jsConfetti;
@@ -16,36 +22,6 @@
 	let guesses = [];
 	let scores = [];
 	let guessLetters = [];
-	let message = null;
-	let timeOut;
-
-	function flashMessage(messageText, displayTime = 3000) {
-		clearTimeout(timeOut);
-		message = messageText;
-
-		timeOut = setTimeout(() => {
-			message = null;
-		}, displayTime);
-	}
-
-	function copyResults() {
-		const emojiResults = `Svelte Wordle ${guesses.length}/6\r` + emojizeScores(scores);
-
-		copyToClipboard(emojiResults)
-			.then(() => {
-				flashMessage("Copied to clipboard.", 1500);
-			})
-			.catch(() => {
-				flashMessage("Unable to copy to clipboard.", 1500);
-			});
-	}
-
-	function reset() {
-		answer = getTestVariable("answer", wordList[Math.floor(Math.random() * wordList.length)]);
-		guesses = [];
-		scores = [];
-		guessLetters = [];
-	}
 
 	$: wordLetterLimit = answer.length;
 	$: hasGuessesLeft = guesses.length < maxGuesses;
@@ -71,9 +47,13 @@
 		}
 	}
 
-	function handleKeypress({ key, keyCode }) {
+	function handleKeypress({ key, keyCode, metaKey = false }) {
+		if (metaKey) return;
+
 		if (gameOver) {
-			if (key === "Enter") reset();
+			if (key === "Enter") {
+				reset();
+			}
 			return;
 		}
 
@@ -83,12 +63,35 @@
 			scores = [...scores, evaluateScore(guessLetters, answer)];
 			guessLetters = [];
 		}
+
 		if (keyCode >= 65 && keyCode <= 90 && guessLetters.length < wordLetterLimit) {
 			guessLetters = [...guessLetters, key.toLowerCase()];
 		} else if (key === "Backspace") {
 			guessLetters.pop();
 			guessLetters = guessLetters;
 		}
+	}
+
+	function copyResults() {
+		const emojiResults = `Svelte Wordle ${guesses.length}/6\r` + emojizeScores(scores);
+
+		copyToClipboard(emojiResults)
+			.then(() => {
+				alert.flashMessage("Copied to clipboard.", 1500);
+			})
+			.catch(() => {
+				alert.flashMessage("Unable to copy to clipboard.", 1500);
+			});
+	}
+
+	function reset() {
+		answer =
+			initialWord ||
+			getTestVariable("answer", wordList[Math.floor(Math.random() * wordList.length)]);
+		initialWord = null;
+		guesses = [];
+		scores = [];
+		guessLetters = [];
 	}
 
 	onMount(() => {
@@ -101,14 +104,10 @@
 <svelte:window on:keydown={handleKeypress} />
 
 <div class="container">
-	<h1><span class="svelte">SVELTE</span> WORDLE</h1>
+	<AppBar />
 
 	<div class="gameContainer">
-		<div class="messageArea">
-			{#if message}
-				<p transition:fade={true}>{message}</p>
-			{/if}
-		</div>
+		<Alert bind:this={alert} />
 
 		{#each guesses as guess, index}
 			<WordRow letters={guess} maxLetters={wordLetterLimit} score={scores[index]} row={index} />
@@ -128,16 +127,20 @@
 					The word was "{answer}".
 				</p>
 				<div class="buttonContainer">
-					<button class="shareButton" on:click={copyResults}>Share</button>
-					<button class="buttonPrimary resetButton" on:click={reset}>Play again</button>
+					<Button class="shareButton" on:click={copyResults}>Share</Button>
+					<Button primary class="resetButton" on:click={reset}>Play again</Button>
 				</div>
 			{/if}
 
 			{#if hasWon}
 				<p class="hasWon">YOU WIN!</p>
 				<div class="buttonContainer">
-					<button class="shareButton" on:click={copyResults}>Share</button>
-					<button class="buttonPrimary resetButton" on:click={reset}>Play again</button>
+					<Button class="shareButton" on:click={copyResults}>Share</Button>
+					{#if initialWord}
+						<Button primary class="resetButton" on:click={reset}>Play more</Button>
+					{:else}
+						<Button primary class="resetButton" on:click={reset}>Play again</Button>
+					{/if}
 				</div>
 			{/if}
 		</div>
@@ -154,10 +157,6 @@
 </div>
 
 <style>
-	.svelte {
-		color: #ff3e00b8; /* #ff3e00; */
-	}
-
 	.container {
 		display: flex;
 		flex-direction: column;
@@ -167,20 +166,9 @@
 
 	.gameContainer {
 		flex: 1;
-	}
-
-	.messageArea {
-		display: flex;
-		justify-content: center;
-		font-size: 1rem;
-		height: 4rem;
-	}
-
-	.messageArea p {
-		padding: 0.5rem 1rem;
-		border-radius: 6px;
-		background: #d7dadc;
-		color: black;
+		overflow: auto;
+		padding-top: 4rem;
+		padding-bottom: 1rem;
 	}
 
 	.hasLost {
@@ -204,30 +192,5 @@
 		width: 100%;
 		margin-left: auto;
 		margin-right: auto;
-	}
-
-	button {
-		border: 0;
-		border-radius: 6px;
-		font-size: 1.25rem;
-		padding: 0.5rem;
-		width: 8rem;
-	}
-
-	button:active {
-		filter: brightness(85%);
-		transform: scale(0.95);
-	}
-
-	.buttonPrimary {
-		background: #538d4e;
-		color: #d7dadc;
-	}
-
-	h1 {
-		text-align: center;
-		font-weight: 700;
-		padding: 0 0 1rem;
-		margin: 0;
 	}
 </style>
