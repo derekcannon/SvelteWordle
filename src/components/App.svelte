@@ -53,11 +53,7 @@
 
 		if (gameOver) {
 			if (key === "Enter") {
-				if (initialWord) {
-					goto("/");
-				} else {
-					reset();
-				}
+				reset();
 			}
 			return;
 		}
@@ -68,6 +64,7 @@
 			scores = [...scores, evaluateScore(guessLetters, answer)];
 			guessLetters = [];
 		}
+
 		if (keyCode >= 65 && keyCode <= 90 && guessLetters.length < wordLetterLimit) {
 			guessLetters = [...guessLetters, key.toLowerCase()];
 		} else if (key === "Backspace") {
@@ -88,10 +85,11 @@
 			});
 	}
 
-	function reset(initialWord) {
+	function reset() {
 		answer =
 			initialWord ||
 			getTestVariable("answer", wordList[Math.floor(Math.random() * wordList.length)]);
+		initialWord = null;
 		guesses = [];
 		scores = [];
 		guessLetters = [];
@@ -100,7 +98,7 @@
 	onMount(() => {
 		setTestVariable("isLoaded", true);
 		jsConfetti = new JSConfetti();
-		reset(initialWord);
+		reset();
 	});
 </script>
 
@@ -131,7 +129,7 @@
 				</p>
 				<div class="buttonContainer">
 					<Button class="shareButton" on:click={copyResults}>Share</Button>
-					<Button primary class="resetButton" on:click={() => reset()}>Play again</Button>
+					<Button primary class="resetButton" on:click={reset}>Play again</Button>
 				</div>
 			{/if}
 
@@ -140,9 +138,9 @@
 				<div class="buttonContainer">
 					<Button class="shareButton" on:click={copyResults}>Share</Button>
 					{#if initialWord}
-						<Button primary class="resetButton" on:click={() => goto("/")}>Play more</Button>
+						<Button primary class="resetButton" on:click={reset}>Play more</Button>
 					{:else}
-						<Button primary class="resetButton" on:click={() => reset()}>Play again</Button>
+						<Button primary class="resetButton" on:click={reset}>Play again</Button>
 					{/if}
 				</div>
 			{/if}
