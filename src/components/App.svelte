@@ -154,7 +154,7 @@
 				<div class="buttonContainer">
 					<button class="button shareButton" on:click={copyResults}>Share</button>
 					{#if initialWord}
-						<a href="/" class="button buttonPrimary resetButton">Play more</a>
+						<a href="/" rel="external" class="button buttonPrimary resetButton">Play more</a>
 					{:else}
 						<button class="button buttonPrimary resetButton" on:click={() => reset()}
 							>Play again</button
