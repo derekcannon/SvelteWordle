@@ -1,18 +1,20 @@
 <script>
 	import { onMount } from "svelte";
-	import { fade } from "svelte/transition";
+	import JSConfetti from "js-confetti";
 	import { evaluateScore } from "$lib/evaluateScore";
 	import { wordList } from "$lib/wordList";
 	import { emojizeScores } from "$lib/emojizeScores";
-	import WordRow from "./WordRow.svelte";
-	import Keyboard from "./Keyboard.svelte";
-	import JSConfetti from "js-confetti";
 	import { setTestVariable, getTestVariable } from "$lib/cypressHelpers";
 	import { copyToClipboard } from "$lib/copyToClipboard";
+	import WordRow from "$comp/common/WordRow.svelte";
+	import Keyboard from "$comp/common/Keyboard.svelte";
 	import AppBar from "$comp/common/AppBar.svelte";
+	import Alert from "$comp/common/Alert.svelte";
 	import { goto } from "$app/navigation";
 
 	export let initialWord;
+
+	let alert;
 
 	const maxGuesses = 6;
 	let jsConfetti;
@@ -20,27 +22,16 @@
 	let guesses = [];
 	let scores = [];
 	let guessLetters = [];
-	let message = null;
-	let timeOut;
-
-	function flashMessage(messageText, displayTime = 3000) {
-		clearTimeout(timeOut);
-		message = messageText;
-
-		timeOut = setTimeout(() => {
-			message = null;
-		}, displayTime);
-	}
 
 	function copyResults() {
 		const emojiResults = `Svelte Wordle ${guesses.length}/6\r` + emojizeScores(scores);
 
 		copyToClipboard(emojiResults)
 			.then(() => {
-				flashMessage("Copied to clipboard.", 1500);
+				alert.flashMessage("Copied to clipboard.", 1500);
 			})
 			.catch(() => {
-				flashMessage("Unable to copy to clipboard.", 1500);
+				alert.flashMessage("Unable to copy to clipboard.", 1500);
 			});
 	}
 
@@ -118,11 +109,7 @@
 	<AppBar />
 
 	<div class="gameContainer">
-		<div class="messageArea">
-			{#if message}
-				<p transition:fade={true}>{message}</p>
-			{/if}
-		</div>
+		<Alert bind:this={alert} />
 
 		{#each guesses as guess, index}
 			<WordRow letters={guess} maxLetters={wordLetterLimit} score={scores[index]} row={index} />
@@ -185,20 +172,9 @@
 
 	.gameContainer {
 		flex: 1;
-	}
-
-	.messageArea {
-		display: flex;
-		justify-content: center;
-		font-size: 1rem;
-		height: 4rem;
-	}
-
-	.messageArea p {
-		padding: 0.5rem 1rem;
-		border-radius: 6px;
-		background: #d7dadc;
-		color: black;
+		overflow: auto;
+		padding-top: 4rem;
+		padding-bottom: 1rem;
 	}
 
 	.hasLost {
