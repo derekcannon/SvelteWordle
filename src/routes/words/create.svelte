@@ -26,6 +26,7 @@
 			<div />
 			<form class="buttonContainer" method="POST">
 				<input
+					autocapitalize="none"
 					name="word"
 					type="text"
 					autofocus

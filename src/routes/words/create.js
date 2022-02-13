@@ -15,7 +15,10 @@ export async function post({ request }) {
 	const encryptionKey = import.meta.env.VITE_ENCRYPTION_KEY;
 	const baseUrl = import.meta.env.VITE_VERCEL_URL;
 
-	const encryptedWordObject = AES.encrypt(JSON.stringify({ word: word }), encryptionKey).toString();
+	const encryptedWordObject = AES.encrypt(
+		JSON.stringify({ word: word.toLowerCase() }),
+		encryptionKey,
+	).toString();
 
 	return {
 		status: 201,
