@@ -10,6 +10,7 @@
 	import Keyboard from "$comp/common/Keyboard.svelte";
 	import AppBar from "$comp/common/AppBar.svelte";
 	import Alert from "$comp/common/Alert.svelte";
+	import Button from "$comp/common/Button.svelte";
 	import { goto } from "$app/navigation";
 
 	export let initialWord;
@@ -22,27 +23,6 @@
 	let guesses = [];
 	let scores = [];
 	let guessLetters = [];
-
-	function copyResults() {
-		const emojiResults = `Svelte Wordle ${guesses.length}/6\r` + emojizeScores(scores);
-
-		copyToClipboard(emojiResults)
-			.then(() => {
-				alert.flashMessage("Copied to clipboard.", 1500);
-			})
-			.catch(() => {
-				alert.flashMessage("Unable to copy to clipboard.", 1500);
-			});
-	}
-
-	function reset(initialWord) {
-		answer =
-			initialWord ||
-			getTestVariable("answer", wordList[Math.floor(Math.random() * wordList.length)]);
-		guesses = [];
-		scores = [];
-		guessLetters = [];
-	}
 
 	$: wordLetterLimit = answer.length;
 	$: hasGuessesLeft = guesses.length < maxGuesses;
@@ -96,6 +76,27 @@
 		}
 	}
 
+	function copyResults() {
+		const emojiResults = `Svelte Wordle ${guesses.length}/6\r` + emojizeScores(scores);
+
+		copyToClipboard(emojiResults)
+			.then(() => {
+				alert.flashMessage("Copied to clipboard.", 1500);
+			})
+			.catch(() => {
+				alert.flashMessage("Unable to copy to clipboard.", 1500);
+			});
+	}
+
+	function reset(initialWord) {
+		answer =
+			initialWord ||
+			getTestVariable("answer", wordList[Math.floor(Math.random() * wordList.length)]);
+		guesses = [];
+		scores = [];
+		guessLetters = [];
+	}
+
 	onMount(() => {
 		setTestVariable("isLoaded", true);
 		jsConfetti = new JSConfetti();
@@ -129,23 +130,19 @@
 					The word was "{answer}".
 				</p>
 				<div class="buttonContainer">
-					<button class="button shareButton" on:click={copyResults}>Share</button>
-					<button class="button buttonPrimary resetButton" on:click={() => reset()}
-						>Play again</button
-					>
+					<Button class="shareButton" on:click={copyResults}>Share</Button>
+					<Button primary class="resetButton" on:click={() => reset()}>Play again</Button>
 				</div>
 			{/if}
 
 			{#if hasWon}
 				<p class="hasWon">YOU WIN!</p>
 				<div class="buttonContainer">
-					<button class="button shareButton" on:click={copyResults}>Share</button>
+					<Button class="shareButton" on:click={copyResults}>Share</Button>
 					{#if initialWord}
-						<a href="/" rel="external" class="button buttonPrimary resetButton">Play more</a>
+						<Button primary class="resetButton" on:click={() => goto("/")}>Play more</Button>
 					{:else}
-						<button class="button buttonPrimary resetButton" on:click={() => reset()}
-							>Play again</button
-						>
+						<Button primary class="resetButton" on:click={() => reset()}>Play again</Button>
 					{/if}
 				</div>
 			{/if}
@@ -198,24 +195,5 @@
 		width: 100%;
 		margin-left: auto;
 		margin-right: auto;
-	}
-
-	.button {
-		border: 0;
-		border-radius: 6px;
-		font-size: 1.25rem;
-		padding: 0.5rem;
-		width: 8rem;
-		text-decoration: none;
-	}
-
-	.button:active {
-		filter: brightness(85%);
-		transform: scale(0.95);
-	}
-
-	.buttonPrimary {
-		background: #538d4e;
-		color: #d7dadc;
 	}
 </style>
