@@ -1,3 +1,7 @@
+<script>
+	import PeopleIcon from "./PeopleIcon.svelte";
+</script>
+
 <div class="container">
 	<div class="sideButtonContainer" />
 
@@ -7,7 +11,9 @@
 
 	<div class="sideButtonContainer">
 		<div class="tooltip">
-			<a href="/words/new" class="miniButton">👥</a>
+			<a href="/words/new" class="createWord">
+				<PeopleIcon style="fill: #d7dadc" />
+			</a>
 			<span class="tooltiptext">Challenge a friend</span>
 		</div>
 	</div>
@@ -21,39 +27,20 @@
 
 	.tooltip .tooltiptext {
 		top: -5px;
-		right: 105%;
+		right: 120%;
 		visibility: hidden;
 		background-color: black;
-		color: #fff;
+		color: #d7dadc;
 		text-align: center;
 		padding: 5px;
 		border-radius: 6px;
+		border: 1px solid #d7dadc;
 		position: absolute;
 		z-index: 1;
 	}
 
 	.tooltip:hover .tooltiptext {
 		visibility: visible;
-	}
-
-	.miniButton {
-		background: none;
-		border: none;
-		color: #d7dadc;
-		font-size: 1.5rem;
-		text-decoration: none;
-		padding: 0.25rem;
-	}
-
-	.miniButton:hover {
-		border: 1px solid #d7dadc;
-		margin-top: -1px; /* prevent jumpy icons */
-		border-radius: 4px;
-	}
-
-	.miniButton:active {
-		filter: brightness(85%);
-		transform: scale(0.95);
 	}
 
 	.container {
@@ -67,6 +54,10 @@
 
 	.sideButtonContainer {
 		width: 4rem;
+		align-items: center;
+		display: flex;
+		justify-content: end;
+		padding-right: 1rem;
 	}
 
 	.logo {

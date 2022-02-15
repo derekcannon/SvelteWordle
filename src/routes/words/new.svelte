@@ -99,6 +99,11 @@
 		{#if !canEnterWord}
 			<div class="urlInfo">
 				<Button on:click={copyResults}>Copy link to word</Button>
+				<div class="buttonContainer">
+					<Button primary on:click={copyResults}
+						><CopyIcon style="transform: scale(0.75); fill: #d7dadc" /> Copy link to word</Button
+					>
+				</div>
 				<p class="canGuess">Press Enter (↵) to start over.</p>
 			</div>
 		{/if}

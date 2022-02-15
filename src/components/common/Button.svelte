@@ -16,6 +16,7 @@
 
 <style>
 	.button {
+		display: flex;
 		border: 0;
 		border-radius: 6px;
 		font-size: 1.25rem;

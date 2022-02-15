@@ -11,6 +11,7 @@
 	import AppBar from "$comp/common/AppBar.svelte";
 	import Alert from "$comp/common/Alert.svelte";
 	import Button from "$comp/common/Button.svelte";
+	import CopyIcon from "$comp/common/CopyIcon.svelte";
 
 	export let initialWord;
 
@@ -127,7 +128,10 @@
 					The word was "{answer}".
 				</p>
 				<div class="buttonContainer">
-					<Button class="shareButton" on:click={copyResults}>Share</Button>
+					<Button class="shareButton" on:click={copyResults}>
+						<CopyIcon style="transform: scale(0.75);" />
+						Share</Button
+					>
 					<Button primary class="resetButton" on:click={reset}>Play again</Button>
 				</div>
 			{/if}
@@ -135,7 +139,10 @@
 			{#if hasWon}
 				<p class="hasWon">YOU WIN!</p>
 				<div class="buttonContainer">
-					<Button class="shareButton" on:click={copyResults}>Share</Button>
+					<Button class="shareButton" on:click={copyResults}>
+						<CopyIcon style="transform: scale(0.75);" />
+						Share</Button
+					>
 					{#if initialWord}
 						<Button primary class="resetButton" on:click={reset}>Play more</Button>
 					{:else}
