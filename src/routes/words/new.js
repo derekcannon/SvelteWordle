@@ -1,4 +1,5 @@
 import AES from "crypto-js/aes";
+import { MAX_WORD_LETTERS } from "$lib/constants.js";
 
 export async function get() {
 	return {
@@ -17,14 +18,18 @@ export async function post({ request }) {
 	const baseUrl = import.meta.env.VITE_VERCEL_URL;
 
 	const encryptedWordObject = AES.encrypt(
-		JSON.stringify({ word: word.toLowerCase() }),
+		JSON.stringify({ word: word.toLowerCase().slice(0, MAX_WORD_LETTERS) }),
 		encryptionKey,
 	).toString();
+
+	const query = new URLSearchParams();
+	query.set("ewo", encryptedWordObject);
 
 	return {
 		status: 201,
 		body: {
-			wordUrl: `${protocol}://${baseUrl}/?ewo=${encodeURIComponent(encryptedWordObject)}`,
+			relativeWordUrl: `/?${query.toString()}`,
+			wordUrl: `${protocol}://${baseUrl}/?${query.toString()}`,
 		},
 	};
 }

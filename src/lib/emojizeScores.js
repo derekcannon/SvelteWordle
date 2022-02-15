@@ -1,8 +1,8 @@
-export function emojizeScores(scores) {
-	return scores.map(emojizeScore).join("\r");
+export function emojizeScores(scores, guesses = []) {
+	return scores.map((score, index) => emojizeScore(score, guesses[index]?.join(""))).join("\r");
 }
 
-function emojizeScore(score) {
+function emojizeScore(score, guess) {
 	const emojis = score.map((value) => {
 		switch (value) {
 			case 0:
@@ -14,5 +14,5 @@ function emojizeScore(score) {
 		}
 	});
 
-	return emojis.join("");
+	return emojis.join("") + (guess ? ` ${guess}` : "");
 }

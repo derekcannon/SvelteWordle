@@ -14,6 +14,7 @@
 	import CopyIcon from "$comp/common/CopyIcon.svelte";
 
 	export let initialWord;
+	let shareGuesses = Boolean(initialWord);
 
 	let alert;
 
@@ -74,7 +75,8 @@
 	}
 
 	function copyResults() {
-		const emojiResults = `Svelte Wordle ${guesses.length}/6\r` + emojizeScores(scores);
+		const emojiResults =
+			`Svelte Wordle ${guesses.length}/6\r` + emojizeScores(scores, shareGuesses ? guesses : []);
 
 		copyToClipboard(emojiResults)
 			.then(() => {
@@ -86,6 +88,10 @@
 	}
 
 	function reset() {
+		if (!initialWord && shareGuesses) {
+			shareGuesses = false;
+		}
+
 		answer =
 			initialWord ||
 			getTestVariable("answer", wordList[Math.floor(Math.random() * wordList.length)]);
@@ -176,11 +182,6 @@
 		overflow: auto;
 		padding-top: 4rem;
 		padding-bottom: 1rem;
-	}
-
-	.hasLost {
-		padding-top: 0.5rem;
-		margin: 0;
 	}
 
 	.buttonContainer {

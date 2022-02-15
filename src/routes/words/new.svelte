@@ -5,13 +5,15 @@
 	import { copyToClipboard } from "$lib/copyToClipboard";
 	import Button from "$comp/common/Button.svelte";
 	import Alert from "$comp/common/Alert.svelte";
+	import CopyIcon from "$comp/common/CopyIcon.svelte";
+	import LinkButton from "$comp/common/LinkButton.svelte";
+	import { MIN_WORD_LETTERS, MAX_WORD_LETTERS } from "$lib/constants";
 
-	const wordLetterMin = 4;
-	const wordLetterMax = 8;
 	let alert;
 	let word = "";
 	let canEnterWord = true;
 	let wordUrl;
+	let relativeWordUrl;
 
 	$: maxLetters = word.length;
 	$: score = canEnterWord ? [] : Array(word.length).fill(2);
@@ -31,6 +33,7 @@
 		if (response.ok) {
 			const data = await response.json();
 			wordUrl = data.wordUrl;
+			relativeWordUrl = data.relativeWordUrl;
 		}
 	}
 
@@ -43,6 +46,11 @@
 		}
 
 		if (key === "Enter") {
+			if (word.length < MIN_WORD_LETTERS) {
+				alert.flashMessage(`Word must contain at least ${MIN_WORD_LETTERS} letters.`, 1500);
+				return;
+			}
+
 			if (canEnterWord) {
 				canEnterWord = false;
 				getUrl();
@@ -58,7 +66,7 @@
 			return;
 		}
 
-		if (keyCode >= 65 && keyCode <= 90 && word.length < wordLetterMax) {
+		if (keyCode >= 65 && keyCode <= 90 && word.length < MAX_WORD_LETTERS) {
 			word = word + key.toLowerCase();
 		}
 	}
@@ -90,7 +98,7 @@
 
 		{#if !word}
 			<div class="explanation">
-				Enter a word ({wordLetterMin}-{wordLetterMax} letters) to challenge your friends!
+				Enter a word ({MIN_WORD_LETTERS}-{MAX_WORD_LETTERS} letters) to challenge your friends!
 			</div>
 		{/if}
 
@@ -98,8 +106,11 @@
 
 		{#if !canEnterWord}
 			<div class="urlInfo">
-				<Button on:click={copyResults}>Copy link to word</Button>
 				<div class="buttonContainer">
+					<!-- TODO: Remove "external" once https://github.com/sveltejs/kit/issues/3727 is fixed.
+						The current problem is endpoints don't recognize searchParams when frontend navigating 
+						to another page. "external" prop will force a full-page navigation. -->
+					<LinkButton href={relativeWordUrl} external>Go to game</LinkButton>
 					<Button primary on:click={copyResults}
 						><CopyIcon style="transform: scale(0.75); fill: #d7dadc" /> Copy link to word</Button
 					>
@@ -150,5 +161,11 @@
 	.urlInfo {
 		padding-top: 1rem;
 		text-align: center;
+	}
+
+	.buttonContainer {
+		display: flex;
+		justify-content: center;
+		gap: 0.75rem;
 	}
 </style>
