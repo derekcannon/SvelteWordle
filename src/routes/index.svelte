@@ -1,7 +1,7 @@
 <script>
 	import App from "../components/App.svelte";
 
-	export let initialWord;
+	export let initialWord = null;
 </script>
 
 <App {initialWord} />

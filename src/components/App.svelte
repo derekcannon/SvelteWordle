@@ -12,6 +12,7 @@
 	import Alert from "$comp/common/Alert.svelte";
 	import Button from "$comp/common/Button.svelte";
 	import CopyIcon from "$comp/common/CopyIcon.svelte";
+	import AppContainer from "$comp/common/AppContainer.svelte";
 
 	export let initialWord;
 	let shareGuesses = Boolean(initialWord);
@@ -110,12 +111,12 @@
 
 <svelte:window on:keydown={handleKeypress} />
 
-<div class="container">
-	<AppBar />
-
-	<div class="gameContainer">
+<AppContainer>
+	<div slot="alert">
 		<Alert bind:this={alert} />
+	</div>
 
+	<div slot="main">
 		{#each guesses as guess, index}
 			<WordRow letters={guess} maxLetters={wordLetterLimit} score={scores[index]} row={index} />
 		{/each}
@@ -159,7 +160,7 @@
 		</div>
 	</div>
 
-	<div class="keyboard">
+	<div slot="keyboard">
 		<Keyboard
 			highlights={keyboardHighlights}
 			on:touchstart={({ detail }) => {
@@ -167,23 +168,9 @@
 			}}
 		/>
 	</div>
-</div>
+</AppContainer>
 
 <style>
-	.container {
-		display: flex;
-		flex-direction: column;
-		height: 100%;
-		touch-action: manipulation;
-	}
-
-	.gameContainer {
-		flex: 1;
-		overflow: auto;
-		padding-top: 4rem;
-		padding-bottom: 1rem;
-	}
-
 	.buttonContainer {
 		display: flex;
 		justify-content: center;
@@ -192,13 +179,5 @@
 
 	.centered {
 		text-align: center;
-	}
-
-	.keyboard {
-		padding-bottom: 1rem;
-		max-width: 450px;
-		width: 100%;
-		margin-left: auto;
-		margin-right: auto;
 	}
 </style>

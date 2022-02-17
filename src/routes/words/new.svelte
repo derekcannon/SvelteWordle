@@ -7,6 +7,7 @@
 	import Alert from "$comp/common/Alert.svelte";
 	import CopyIcon from "$comp/common/CopyIcon.svelte";
 	import LinkButton from "$comp/common/LinkButton.svelte";
+	import AppContainer from "$comp/common/AppContainer.svelte";
 	import { MIN_WORD_LETTERS, MAX_WORD_LETTERS } from "$lib/constants";
 
 	let alert;
@@ -90,12 +91,12 @@
 
 <svelte:window on:keydown={handleKeypress} />
 
-<div class="container">
-	<AppBar />
-
-	<div class="gameContainer">
+<AppContainer>
+	<div slot="alert">
 		<Alert bind:this={alert} />
+	</div>
 
+	<div slot="main">
 		{#if !word}
 			<div class="explanation">
 				Enter a word ({MIN_WORD_LETTERS}-{MAX_WORD_LETTERS} letters) to challenge your friends!
@@ -108,7 +109,7 @@
 			<div class="urlInfo">
 				<div class="buttonContainer">
 					<!-- TODO: Remove "external" once https://github.com/sveltejs/kit/issues/3727 is fixed.
-						The current problem is endpoints don't recognize searchParams when frontend navigating 
+						The current problem is endpoints don't recognize searchParams when frontend navigating
 						to another page. "external" prop will force a full-page navigation. -->
 					<LinkButton href={relativeWordUrl} external>Go to game</LinkButton>
 					<Button primary on:click={copyResults}
@@ -120,40 +121,20 @@
 		{/if}
 	</div>
 
-	<div class="keyboard">
+	<div slot="keyboard">
 		<Keyboard
 			on:touchstart={({ detail }) => {
 				handleKeypress(detail);
 			}}
 		/>
 	</div>
-</div>
+</AppContainer>
 
 <style>
-	.container {
-		display: flex;
-		flex-direction: column;
-		height: 100%;
-		touch-action: manipulation;
-	}
-
-	.gameContainer {
-		flex: 1;
-		padding-top: 4rem;
-	}
-
 	.explanation {
 		font-size: 1.5rem;
 		max-width: 450px;
 		text-align: center;
-		margin-left: auto;
-		margin-right: auto;
-	}
-
-	.keyboard {
-		padding-bottom: 1rem;
-		max-width: 450px;
-		width: 100%;
 		margin-left: auto;
 		margin-right: auto;
 	}
