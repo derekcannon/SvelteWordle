@@ -2,10 +2,14 @@ export function copyToClipboard(string) {
 	if (navigator?.clipboard) {
 		return navigator.clipboard.writeText(string);
 	} else {
-		return new Promise(function (resolve, reject) {
-			const result = iOSClipboardHack(string);
-			return result ? resolve() : reject();
-		});
+		if (navigator?.share) {
+			return navigator.share(string);
+		} else {
+			return new Promise(function (resolve, reject) {
+				const result = iOSClipboardHack(string);
+				return result ? resolve() : reject();
+			});
+		}
 	}
 }
 
