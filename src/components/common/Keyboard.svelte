@@ -3,6 +3,7 @@
 	import { keyMappings } from "$lib/keyMappings";
 
 	export let highlights = {};
+	export let disabled = false;
 
 	const dispatch = createEventDispatcher();
 
@@ -21,25 +22,32 @@
 	}
 </script>
 
-{#each keyMappings as keyMappingRow}
-	<div class="keyRow">
-		{#each keyMappingRow as keyMapping}
-			{@const highlight = highlights[keyMapping[1]]}
-			<button
-				on:touchstart={(event) => handleKeypress(event, keyMapping)}
-				on:click={(event) => handleKeypress(event, keyMapping)}
-				><span
-					class:noMatchLetter={highlight === 0}
-					class:partialMatchLetter={highlight === 1}
-					class:exactMatchLetter={highlight === 2}
-					class="keyBox">{keyMapping[1]}</span
-				></button
-			>
-		{/each}
-	</div>
-{/each}
+<div class="container">
+	{#each keyMappings as keyMappingRow}
+		<div class="keyRow">
+			{#each keyMappingRow as keyMapping}
+				{@const highlight = highlights[keyMapping[1]]}
+				<button
+					{disabled}
+					on:touchstart={(event) => handleKeypress(event, keyMapping)}
+					on:click={(event) => handleKeypress(event, keyMapping)}
+					><span
+						class:noMatchLetter={highlight === 0}
+						class:partialMatchLetter={highlight === 1}
+						class:exactMatchLetter={highlight === 2}
+						class="keyBox">{keyMapping[1]}</span
+					></button
+				>
+			{/each}
+		</div>
+	{/each}
+</div>
 
 <style>
+	.container {
+		padding-top: 1rem;
+	}
+
 	.keyRow {
 		display: flex;
 		justify-content: center;
@@ -62,10 +70,18 @@
 		color: white;
 	}
 
-	button:active {
-		background: darkgray;
-		transform: scale(0.9);
+	.keyBox:active {
+		filter: brightness(85%);
+	}
+
+	button:disabled {
+		filter: brightness(50%);
+		font-style: italic;
+	}
+
+	button:enabled:active {
 		-webkit-touch-callout: none;
+		transform: scale(0.9);
 	}
 
 	.noMatchLetter {

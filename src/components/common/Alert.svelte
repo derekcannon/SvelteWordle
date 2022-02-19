@@ -1,5 +1,7 @@
 <script>
 	import { fade } from "svelte/transition";
+
+	export let absolute = true;
 	let message;
 	let timeout;
 
@@ -11,18 +13,26 @@
 			message = null;
 		}, displayTime);
 	}
+
+	export function set(messageText) {
+		clearTimeout(timeout);
+		message = messageText;
+	}
 </script>
 
-<div class="container">
+<div class="container" class:absolute>
 	{#if message}
 		<p transition:fade={true}>{message}</p>
 	{/if}
 </div>
 
 <style>
-	.container {
+	.absolute {
 		position: absolute;
 		top: 3.75rem;
+	}
+
+	.container {
 		width: 100%;
 		display: flex;
 		justify-content: center;
