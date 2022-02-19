@@ -26,6 +26,8 @@ export async function post({ request }) {
 		},
 	});
 
+	console.log("auth is ", auth);
+
 	return {
 		status: 200,
 		body: auth,

@@ -62,6 +62,11 @@
 
 		channel = pusher.subscribe(channelName);
 
+		channel.bind("pusher:subscription_error", (error) => {
+			console.error(error);
+			alert.set("Unable to connect. Try again later.");
+		});
+
 		channel.bind("sync-shared-state", function (newState) {
 			sharedAppState = newState;
 		});
