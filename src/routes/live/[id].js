@@ -24,21 +24,21 @@ export async function post({ request }) {
 		useTLS: VITE_PUSHER_USE_TLS,
 	});
 
-	// const asyncTrigger = (data) => {
-	// 	return new Promise((resolve, reject) => {
-	// 		pusher.trigger(channelName, "sync-shared-state", data, (error, _, response) => {
-	// 			if (error) {
-	// 				reject(error);
-	// 			}
-	// 			resolve(response);
-	// 		});
-	// 	});
-	// };
+	const asyncTrigger = (data) => {
+		return new Promise((resolve, reject) => {
+			pusher.trigger(channelName, "sync-shared-state", data, (error, _, response) => {
+				if (error) {
+					reject(error);
+				}
+				resolve(response);
+			});
+		});
+	};
 
 	// TODO: only needed if there are other members?
 
-	// await asyncTrigger(data);
-	pusher.trigger(channelName, "sync-shared-state", data);
+	await asyncTrigger(data);
+	// pusher.trigger(channelName, "sync-shared-state", data);
 
 	return {
 		body: {
