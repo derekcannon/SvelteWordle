@@ -101,9 +101,9 @@
 		channel.bind("pusher:member_removed", function (user) {
 			members = channel.members;
 
-			sharedAppState.orderedPlayerIds = sharedAppState.orderedPlayerIds.filter(
-				(id) => id !== user.id,
-			);
+			sharedAppState.orderedPlayerIds = [
+				...new Set(sharedAppState.orderedPlayerIds.filter((id) => id !== user.id)),
+			];
 
 			// TODO: if member leaves and it's their turn, give turn to someone else
 			if (sharedAppState.currentPlayerId === user.id) {
@@ -123,7 +123,7 @@
 					...{
 						host: userId,
 						currentPlayerId: userId,
-						orderedPlayerIds: [...sharedAppState.orderedPlayerIds, userId],
+						orderedPlayerIds: [...new Set([...sharedAppState.orderedPlayerIds, userId])],
 					},
 				};
 			}
@@ -178,7 +178,7 @@
 	}
 
 	async function handleKeypress({ key, keyCode, metaKey = false }) {
-		if (isSignedIn && !isYourTurn) return;
+		if ((isSignedIn && !isYourTurn) || isSubmitting) return;
 
 		if (metaKey) return;
 
@@ -198,20 +198,27 @@
 
 			guessLetters = [];
 
-			// TODO: this has to be current route, not live/test
-			await fetch(`/live/${channelName}`, {
-				method: "POST",
-				headers: {
-					accept: "application/json",
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					channelName: channelName,
-					data: sharedAppState,
-				}),
-			});
-
-			isSubmitting = false;
+			try {
+				console.log("triggering sync-shared-state");
+				// TODO: this has to be current route, not live/test
+				await fetch(`/live/${channelName}`, {
+					method: "POST",
+					headers: {
+						accept: "application/json",
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						channelName: channelName,
+						data: sharedAppState,
+					}),
+				});
+				console.log("triggering sync-shared-state DONE");
+			} catch (error) {
+				console.error(e);
+				alert.flashMessage("Failed to submit answer. Try reloading.");
+			} finally {
+				isSubmitting = false;
+			}
 		}
 
 		if (keyCode >= 65 && keyCode <= 90 && guessLetters.length < wordLetterLimit) {
@@ -294,7 +301,7 @@
 	<div slot="keyboard">
 		<Alert absolute={false} bind:this={secondaryAlert} />
 		<Keyboard
-			disabled={isSignedIn && !isYourTurn}
+			disabled={(isSignedIn && !isYourTurn) || isSubmitting}
 			highlights={[]}
 			on:touchstart={({ detail }) => {
 				const keyPressed = filterKeypress(detail);
