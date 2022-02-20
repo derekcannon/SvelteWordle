@@ -64,29 +64,37 @@
 
 		channel.bind("pusher:subscription_error", (error) => {
 			console.error(error);
-			alert.set("Unable to connect. Try again later.");
+			alert.flashMessage("Unable to connect. Try again later.");
 		});
 
 		channel.bind("sync-shared-state", function (newState) {
+			console.log("received sync-shared-state");
 			sharedAppState = newState;
 		});
 
-		channel.bind("pusher:member_added", function (newUser) {
+		channel.bind("pusher:member_added", async function (newUser) {
 			members = channel.members;
 
 			if (isHost) {
 				sharedAppState.orderedPlayerIds = [...sharedAppState.orderedPlayerIds, newUser.id];
-				fetch(`/live/${channelName}`, {
-					method: "POST",
-					headers: {
-						accept: "application/json",
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({
-						channelName: channelName,
-						data: sharedAppState,
-					}),
-				});
+
+				console.log("triggering sync-shared-state");
+				try {
+					await fetch(`/live/${channelName}`, {
+						method: "POST",
+						headers: {
+							accept: "application/json",
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify({
+							channelName: channelName,
+							data: sharedAppState,
+						}),
+					});
+					console.log("triggering sync-shared-state DONE");
+				} catch (e) {
+					console.error(e);
+				}
 			}
 		});
 
